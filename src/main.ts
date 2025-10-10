@@ -20,8 +20,19 @@ button.addEventListener("click", () => {
   console.log(`💎 You now have ${counter} diamonds!`);
 });
 
-setInterval(() => {
-  counter++;
-  counterDiv.textContent = `${counter} 💎`;
-  console.log(`Auto-tick! You now have ${counter} diamonds.`);
-}, 1000);
+let lastTime = performance.now();
+
+function update(now: number) {
+  // Time since last frame (in seconds)
+  const delta = (now - lastTime) / 1000;
+  lastTime = now;
+
+  // Increase counter by 1 per second of real time
+  counter += delta;
+  counterDiv.textContent = `${counter.toFixed(2)} diamonds 💎`;
+
+  requestAnimationFrame(update);
+}
+
+// Start animation loop
+requestAnimationFrame(update);
