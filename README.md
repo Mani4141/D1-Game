@@ -1,3 +1,6 @@
 # CMPM 121 D1 Project
 
-This is the starting point for your CMPM 121 D1 project. The goal of this project is to create a simple web application using TypeScript, Vite, and modern web development practices. Students should make sure to remove _this_ content from their README.md file and replace it with their own project documentation.
+💎 Diamond Clicker
+
+A simple incremental clicker game built with TypeScript, inspired by classics like _Cookie Clicker_.\
+Click the diamond button to earn gems, buy upgrades to automate your earnings, and watch your fortune grow!
