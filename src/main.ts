@@ -19,3 +19,9 @@ button.addEventListener("click", () => {
   counterDiv.textContent = `${counter} 💎`;
   console.log(`💎 You now have ${counter} diamonds!`);
 });
+
+setInterval(() => {
+  counter++;
+  counterDiv.textContent = `${counter} 💎`;
+  console.log(`Auto-tick! You now have ${counter} diamonds.`);
+}, 1000);
