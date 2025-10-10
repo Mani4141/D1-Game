@@ -1,6 +1,10 @@
-import exampleIconUrl from "./noun-paperclip-7598668-00449F.png";
 import "./style.css";
 
-document.body.innerHTML = `
-  <p>Example image asset: <img src="${exampleIconUrl}" class="icon" /></p>
-`;
+const button = document.createElement("button");
+button.id = "clickMe";
+button.textContent = "💎 Click Me!";
+document.body.appendChild(button);
+
+button.addEventListener("click", () => {
+  console.log("Button clicked!");
+});
