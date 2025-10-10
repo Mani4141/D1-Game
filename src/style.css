@@ -24,10 +24,12 @@ body {
   font-weight: 800;
 }
 
-/* Button */
-#clickMe {
+/* Shared button style */
+#clickMe,
+#upgradeBtn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 12px 18px;
   font-weight: 700;
@@ -37,24 +39,42 @@ body {
   background: #ffffff;
   color: #1b1f24;
   cursor: pointer;
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease,
+    background 120ms ease;
+  margin-top: 10px;
 }
 
-#clickMe:hover {
+/* Hover / active / focus for both buttons */
+#clickMe:hover,
+#upgradeBtn:hover {
   background: #f2f5f9;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
   transform: translateY(-1px);
 }
 
-#clickMe:active {
+#clickMe:active,
+#upgradeBtn:active {
   transform: translateY(0);
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
 }
 
-#clickMe:focus-visible {
+#clickMe:focus-visible,
+#upgradeBtn:focus-visible {
   outline: 3px solid #99c3ff;
   outline-offset: 2px;
 }
 
+/* Disabled upgrade button */
+#upgradeBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #e9ecf0;
+  box-shadow: none;
+}
+
+/* Optional log & icon styles */
 #log li {
   padding: 6px 8px;
   border: 1px solid #e3e7ee;
