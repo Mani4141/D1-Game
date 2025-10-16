@@ -28,112 +28,111 @@ const shop = document.createElement("div");
 shop.id = "shop";
 document.body.appendChild(shop);
 
-//upgrades
-type Upgrade = {
-  key: string;
-  label: string;
-  cost: number;
-  baseCost: number;
-  rate: number;
-  count: number;
+// --- Data-driven items (no hard-coded logic elsewhere) ---
+interface Item {
+  key: string; // stable id
+  name: string; // label shown to user
   emoji: string;
-};
+  baseCost: number; // starting cost
+  cost: number; // current cost (scales by factor)
+  rate: number; // crystals per second
+  count: number; // owned
+}
 
-const upgrades: Upgrade[] = [
+const PRICE_FACTOR = 1.15;
+
+const availableItems: Item[] = [
   {
     key: "cart",
-    label: "Mine Cart",
-    cost: 10,
+    name: "Mine Cart",
+    emoji: "🛒",
     baseCost: 10,
+    cost: 10,
     rate: 0.1,
     count: 0,
-    emoji: "🛒",
   },
   {
     key: "drill",
-    label: "Drill Rig",
-    cost: 100,
+    name: "Drill Rig",
+    emoji: "⛏️",
     baseCost: 100,
+    cost: 100,
     rate: 2.0,
     count: 0,
-    emoji: "⛏️",
   },
   {
     key: "reactor",
-    label: "Crystal Reactor",
-    cost: 1000,
+    name: "Crystal Reactor",
+    emoji: "🔮",
     baseCost: 1000,
+    cost: 1000,
     rate: 50,
     count: 0,
-    emoji: "🔮",
   },
 ];
 
 const buttons = new Map<string, HTMLButtonElement>();
 
-// buttons for upgrades
-for (const u of upgrades) {
+// buttons for upgrades (loop builds all)
+for (const it of availableItems) {
   const btn = document.createElement("button");
   btn.className = "upgradeBtn";
-  btn.dataset.key = u.key;
-  btn.textContent = `${u.emoji} Buy ${u.label} (+${u.rate}/s) • Cost: ${
-    u.cost.toFixed(2)
+  btn.dataset.key = it.key;
+  btn.textContent = `${it.emoji} Buy ${it.name} (+${it.rate}/s) • Cost: ${
+    it.cost.toFixed(2)
   } crystals`;
   btn.disabled = true;
-  buttons.set(u.key, btn);
+  buttons.set(it.key, btn);
   shop.appendChild(btn);
 
   btn.addEventListener("click", () => {
-    if (counter >= u.cost) {
-      counter -= u.cost;
-      u.count += 1;
-
-      // price increases by 15% per purchase
-      u.cost = u.baseCost * Math.pow(1.15, u.count);
-
+    if (counter >= it.cost) {
+      counter -= it.cost;
+      it.count += 1;
+      // 15% exponential price increase after each purchase
+      it.cost = it.baseCost * Math.pow(PRICE_FACTOR, it.count);
       recomputeGrowthRate();
       paint();
       console.log(
-        `⚙️ Purchased ${u.label} (x${u.count}). Next cost: ${
-          u.cost.toFixed(
-            2,
-          )
-        } crystals • Total rate: ${growthRate.toFixed(2)} crystals/sec`,
+        `⚙️ Purchased ${it.name} (x${it.count}). Next cost: ${
+          it.cost.toFixed(2)
+        } crystals • Total rate: ${growthRate.toFixed(2)}/s`,
       );
     }
   });
 }
 
-//helpers
+//helpers (all loop-based over availableItems)
 function recomputeGrowthRate() {
-  growthRate = upgrades.reduce((sum, u) => sum + u.count * u.rate, 0);
+  growthRate = availableItems.reduce((sum, it) => sum + it.count * it.rate, 0);
 }
 
 function updateAffordability() {
-  for (const u of upgrades) {
-    const btn = buttons.get(u.key)!;
-    btn.disabled = counter < u.cost;
+  for (const it of availableItems) {
+    const btn = buttons.get(it.key)!;
+    btn.disabled = counter < it.cost;
   }
 }
 
 function paintCounter() {
-  counterDiv.textContent = `${counter.toFixed(2)} Crystals 💎`;
+  counterDiv.textContent = `${counter.toFixed(2)} crystals ⛏️`;
 }
 
 function paintRate() {
-  rateDiv.textContent = `Rate: ${growthRate.toFixed(2)} Crystals/sec`;
+  rateDiv.textContent = `Rate: ${growthRate.toFixed(2)} crystals/sec`;
 }
 
 function paintInventory() {
-  const parts = upgrades.map((u) => `${u.label}×${u.count}`);
-  inventoryDiv.textContent = `Owned: ${parts.join(" | ")}`;
+  inventoryDiv.textContent = `Owned: ${
+    availableItems.map((it) => `${it.name}×${it.count}`).join(" | ")
+  }`;
 }
 
 function paintShop() {
-  for (const u of upgrades) {
-    const btn = buttons.get(u.key)!;
-    btn.textContent = `${u.emoji} Buy ${u.label} (+${u.rate}/s) • Cost: ${
-      u.cost.toFixed(2)
+  for (const it of availableItems) {
+    const btn = buttons.get(it.key)!;
+    btn.textContent = `${it.emoji} Buy ${it.name} (+${it.rate}/s) • Cost: ${
+      it.cost.toFixed(2)
     } crystals`;
   }
 }
