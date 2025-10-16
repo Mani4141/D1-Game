@@ -1,4 +1,4 @@
-/* Reset */
+/* Reset-ish */
 * {
   box-sizing: border-box;
 }
@@ -31,9 +31,9 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 12px 18px;
+  padding: 14px 22px; /* a touch bigger for the main action */
   font-weight: 700;
-  font-size: 16px;
+  font-size: 18px; /* slightly larger text for readability */
   border: 1px solid #d1d8e2;
   border-radius: 10px;
   background: #ffffff;

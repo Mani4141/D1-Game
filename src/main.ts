@@ -3,7 +3,7 @@ import "./style.css";
 //click
 const clickBtn = document.createElement("button");
 clickBtn.id = "clickMe";
-clickBtn.textContent = "💎 Click Me!";
+clickBtn.textContent = "⛏️ Mine Crystal";
 document.body.appendChild(clickBtn);
 
 //counter
@@ -78,7 +78,7 @@ for (const u of upgrades) {
   btn.dataset.key = u.key;
   btn.textContent = `${u.emoji} Buy ${u.label} (+${u.rate}/s) • Cost: ${
     u.cost.toFixed(2)
-  } 💎`;
+  } crystals`;
   btn.disabled = true;
   buttons.set(u.key, btn);
   shop.appendChild(btn);
@@ -98,7 +98,7 @@ for (const u of upgrades) {
           u.cost.toFixed(
             2,
           )
-        } 💎, total rate: ${growthRate.toFixed(2)}/s`,
+        } crystals • Total rate: ${growthRate.toFixed(2)} crystals/sec`,
       );
     }
   });
@@ -117,11 +117,11 @@ function updateAffordability() {
 }
 
 function paintCounter() {
-  counterDiv.textContent = `${counter.toFixed(2)} 💎`;
+  counterDiv.textContent = `${counter.toFixed(2)} Crystals 💎`;
 }
 
 function paintRate() {
-  rateDiv.textContent = `Rate: ${growthRate.toFixed(2)} 💎/s`;
+  rateDiv.textContent = `Rate: ${growthRate.toFixed(2)} Crystals/sec`;
 }
 
 function paintInventory() {
@@ -134,7 +134,7 @@ function paintShop() {
     const btn = buttons.get(u.key)!;
     btn.textContent = `${u.emoji} Buy ${u.label} (+${u.rate}/s) • Cost: ${
       u.cost.toFixed(2)
-    } 💎`;
+    } crystals`;
   }
 }
 
@@ -150,7 +150,7 @@ function paint() {
 clickBtn.addEventListener("click", () => {
   counter += 1;
   paint();
-  console.log(`💎 Click! You now have ${counter.toFixed(2)} diamonds`);
+  console.log(`💎 +1 crystal! Total: ${counter.toFixed(2)}`);
 });
 
 //passive income logic
