@@ -1,82 +1,152 @@
 import "./style.css";
 
-//button
-const button = document.createElement("button");
-button.id = "clickMe";
-button.textContent = "💎 Click Me!";
-document.body.appendChild(button);
+//click
+const clickBtn = document.createElement("button");
+clickBtn.id = "clickMe";
+clickBtn.textContent = "💎 Click Me!";
+document.body.appendChild(clickBtn);
 
 //counter
-let counter: number = 0;
+let counter = 0;
 const counterDiv = document.createElement("div");
 counterDiv.id = "counter";
 document.body.appendChild(counterDiv);
 
 let growthRate = 0;
 
-// Upgrade button
-const UPGRADE_COST = 10;
-const upgradeBtn = document.createElement("button");
-upgradeBtn.id = "upgradeBtn";
-upgradeBtn.textContent = `🚀 Buy Upgrade (+1/s) [Cost: ${UPGRADE_COST} 💎]`;
-upgradeBtn.disabled = true; // disabled until player has >= 10
-document.body.appendChild(upgradeBtn);
-
-// Optional: show current growth rate
+// rate display
 const rateDiv = document.createElement("div");
 rateDiv.id = "rate";
 document.body.appendChild(rateDiv);
 
-// Helpers
-function updateCounterText() {
-  counterDiv.textContent = `${counter.toFixed(2)} 💎`;
+const inventoryDiv = document.createElement("div");
+inventoryDiv.id = "inventory";
+document.body.appendChild(inventoryDiv);
+
+//shop
+const shop = document.createElement("div");
+shop.id = "shop";
+document.body.appendChild(shop);
+
+//upgrades
+type Upgrade = {
+  key: string;
+  label: string;
+  cost: number;
+  rate: number;
+  count: number;
+  emoji: string;
+};
+
+const upgrades: Upgrade[] = [
+  {
+    key: "cart",
+    label: "Mine Cart",
+    cost: 10,
+    rate: 0.1,
+    count: 0,
+    emoji: "🛒",
+  },
+  {
+    key: "drill",
+    label: "Drill Rig",
+    cost: 100,
+    rate: 2.0,
+    count: 0,
+    emoji: "⛏️",
+  },
+  {
+    key: "reactor",
+    label: "Crystal Reactor",
+    cost: 1000,
+    rate: 50,
+    count: 0,
+    emoji: "🔮",
+  },
+];
+
+const buttons = new Map<string, HTMLButtonElement>();
+
+// buttons for upgrades
+for (const u of upgrades) {
+  const btn = document.createElement("button");
+  btn.className = "upgradeBtn";
+  btn.dataset.key = u.key;
+  btn.textContent =
+    `${u.emoji} Buy ${u.label} (+${u.rate}/s) • Cost: ${u.cost} 💎`;
+  btn.disabled = true;
+  buttons.set(u.key, btn);
+  shop.appendChild(btn);
+
+  btn.addEventListener("click", () => {
+    if (counter >= u.cost) {
+      counter -= u.cost;
+      u.count += 1;
+      recomputeGrowthRate();
+      paint();
+      console.log(
+        `⚙️ Purchased ${u.label}. New rate: ${growthRate.toFixed(2)}/s`,
+      );
+    }
+  });
 }
 
-function updateRateText() {
-  rateDiv.textContent = `Rate: ${growthRate.toFixed(2)} /s`;
+//helpers
+function recomputeGrowthRate() {
+  growthRate = upgrades.reduce((sum, u) => sum + u.count * u.rate, 0);
 }
 
 function updateAffordability() {
-  upgradeBtn.disabled = counter < UPGRADE_COST;
+  for (const u of upgrades) {
+    const btn = buttons.get(u.key)!;
+    btn.disabled = counter < u.cost;
+  }
 }
 
-//counter logic
-button.addEventListener("click", () => {
-  counter++;
-  updateCounterText();
+function paintCounter() {
+  counterDiv.textContent = `${counter.toFixed(2)} 💎`;
+}
+
+function paintRate() {
+  rateDiv.textContent = `Rate: ${growthRate.toFixed(2)} 💎/s`;
+}
+
+function paintInventory() {
+  const parts = upgrades.map((u) => `${u.label}×${u.count}`);
+  inventoryDiv.textContent = `Owned: ${parts.join(" | ")}`;
+}
+
+function paint() {
+  paintCounter();
+  paintRate();
+  paintInventory();
   updateAffordability();
-  console.log(`💎 You now have ${counter} diamonds!`);
+}
+
+// Click logic
+clickBtn.addEventListener("click", () => {
+  counter += 1;
+  paint();
+  console.log(`💎 Click! You now have ${counter.toFixed(2)} diamonds`);
 });
 
-// Purchase upgrade when affordable
-upgradeBtn.addEventListener("click", () => {
-  if (counter >= UPGRADE_COST) {
-    counter -= UPGRADE_COST;
-    growthRate += 1; // +1 per second
-    updateCounterText();
-    updateRateText();
-    updateAffordability();
-    console.log(`🚀 Purchased upgrade. New rate: ${growthRate.toFixed(2)}/s`);
-  }
-});
-
+//passive income logic
 let lastTime = performance.now();
 
 function update(now: number) {
-  // Time since last frame (in seconds)
   const delta = (now - lastTime) / 1000;
   lastTime = now;
 
   if (growthRate > 0) {
     counter += growthRate * delta;
-    updateCounterText();
+    paintCounter();
+    paintRate();
     updateAffordability();
   }
+
   requestAnimationFrame(update);
 }
 
-// Start animation loop
-updateCounterText();
-updateRateText();
-updateAffordability();
+// --- Initialize UI ---
+paint();
 requestAnimationFrame(update);
