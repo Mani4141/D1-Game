@@ -33,6 +33,7 @@ type Upgrade = {
   key: string;
   label: string;
   cost: number;
+  baseCost: number;
   rate: number;
   count: number;
   emoji: string;
@@ -43,6 +44,7 @@ const upgrades: Upgrade[] = [
     key: "cart",
     label: "Mine Cart",
     cost: 10,
+    baseCost: 10,
     rate: 0.1,
     count: 0,
     emoji: "🛒",
@@ -51,6 +53,7 @@ const upgrades: Upgrade[] = [
     key: "drill",
     label: "Drill Rig",
     cost: 100,
+    baseCost: 100,
     rate: 2.0,
     count: 0,
     emoji: "⛏️",
@@ -59,6 +62,7 @@ const upgrades: Upgrade[] = [
     key: "reactor",
     label: "Crystal Reactor",
     cost: 1000,
+    baseCost: 1000,
     rate: 50,
     count: 0,
     emoji: "🔮",
@@ -72,8 +76,9 @@ for (const u of upgrades) {
   const btn = document.createElement("button");
   btn.className = "upgradeBtn";
   btn.dataset.key = u.key;
-  btn.textContent =
-    `${u.emoji} Buy ${u.label} (+${u.rate}/s) • Cost: ${u.cost} 💎`;
+  btn.textContent = `${u.emoji} Buy ${u.label} (+${u.rate}/s) • Cost: ${
+    u.cost.toFixed(2)
+  } 💎`;
   btn.disabled = true;
   buttons.set(u.key, btn);
   shop.appendChild(btn);
@@ -82,10 +87,18 @@ for (const u of upgrades) {
     if (counter >= u.cost) {
       counter -= u.cost;
       u.count += 1;
+
+      // price increases by 15% per purchase
+      u.cost = u.baseCost * Math.pow(1.15, u.count);
+
       recomputeGrowthRate();
       paint();
       console.log(
-        `⚙️ Purchased ${u.label}. New rate: ${growthRate.toFixed(2)}/s`,
+        `⚙️ Purchased ${u.label} (x${u.count}). Next cost: ${
+          u.cost.toFixed(
+            2,
+          )
+        } 💎, total rate: ${growthRate.toFixed(2)}/s`,
       );
     }
   });
@@ -116,10 +129,20 @@ function paintInventory() {
   inventoryDiv.textContent = `Owned: ${parts.join(" | ")}`;
 }
 
+function paintShop() {
+  for (const u of upgrades) {
+    const btn = buttons.get(u.key)!;
+    btn.textContent = `${u.emoji} Buy ${u.label} (+${u.rate}/s) • Cost: ${
+      u.cost.toFixed(2)
+    } 💎`;
+  }
+}
+
 function paint() {
   paintCounter();
   paintRate();
   paintInventory();
+  paintShop();
   updateAffordability();
 }
 
