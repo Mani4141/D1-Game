@@ -98,26 +98,27 @@ const availableItems: Item[] = [
 ];
 
 // UI Setup: Generate upgrade buttons and interactions
-const buttons = new Map<string, HTMLButtonElement>();
+const upgradeButtons = new Map<string, HTMLButtonElement>();
 
-for (const it of availableItems) {
-  const btn = document.createElement("button");
-  btn.className = "upgradeBtn";
-  btn.dataset.key = it.key;
-  btn.title = it.description;
-  btn.textContent = `${it.emoji} Buy ${it.name} (+${it.rate}/s) • Cost: ${
-    it.cost.toFixed(2)
-  } crystals`;
-  btn.disabled = true;
-  buttons.set(it.key, btn);
-  shop.appendChild(btn);
+for (const item of availableItems) {
+  const upgradeButton = document.createElement("button");
+  upgradeButton.className = "upgradeBtn";
+  upgradeButton.dataset.key = item.key;
+  upgradeButton.title = item.description;
+  upgradeButton.textContent =
+    `${item.emoji} Buy ${item.name} (+${item.rate}/s) • Cost: ${
+      item.cost.toFixed(2)
+    } crystals`;
+  upgradeButton.disabled = true;
+  upgradeButtons.set(item.key, upgradeButton);
+  shop.appendChild(upgradeButton);
 
-  btn.addEventListener("click", () => {
-    if (counter >= it.cost) {
-      counter -= it.cost;
-      it.count += 1;
+  upgradeButton.addEventListener("click", () => {
+    if (counter >= item.cost) {
+      counter -= item.cost;
+      item.count += 1;
       // Price scales exponentially after each purchase to increase challenge
-      it.cost = it.baseCost * Math.pow(PRICE_FACTOR, it.count);
+      item.cost = item.baseCost * Math.pow(PRICE_FACTOR, item.count);
       recomputeGrowthRate();
       paint();
     }
@@ -126,13 +127,16 @@ for (const it of availableItems) {
 
 // Logic: Calculates growth rate and button state
 function recomputeGrowthRate() {
-  growthRate = availableItems.reduce((sum, it) => sum + it.count * it.rate, 0);
+  growthRate = availableItems.reduce(
+    (sum, item) => sum + item.count * item.rate,
+    0,
+  );
 }
 
 function updateAffordability() {
-  for (const it of availableItems) {
-    const btn = buttons.get(it.key)!;
-    btn.disabled = counter < it.cost;
+  for (const item of availableItems) {
+    const upgradeButton = upgradeButtons.get(item.key)!;
+    upgradeButton.disabled = counter < item.cost;
   }
 }
 
@@ -147,17 +151,18 @@ function paintRate() {
 
 function paintInventory() {
   inventoryDiv.textContent = `Owned: ${
-    availableItems.map((it) => `${it.name}×${it.count}`).join(" | ")
+    availableItems.map((item) => `${item.name}×${item.count}`).join(" | ")
   }`;
 }
 
 function paintShop() {
-  for (const it of availableItems) {
-    const btn = buttons.get(it.key)!;
-    btn.textContent = `${it.emoji} Buy ${it.name} (+${it.rate}/s) • Cost: ${
-      it.cost.toFixed(2)
-    } crystals`;
-    btn.title = it.description;
+  for (const item of availableItems) {
+    const upgradeButton = upgradeButtons.get(item.key)!;
+    upgradeButton.textContent =
+      `${item.emoji} Buy ${item.name} (+${item.rate}/s) • Cost: ${
+        item.cost.toFixed(2)
+      } crystals`;
+    upgradeButton.title = item.description;
   }
 }
 
