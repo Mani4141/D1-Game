@@ -9,6 +9,7 @@ UI Credits and Inspirations (D1.d)
 
 For the D1.d: Interface Refinement update, I improved my game’s user interface by drawing inspiration from other student projects in the CMPM 121 D1 Gallery:
 [KupoDupo’s D1 Project](https://github.com/KupoDupo/CMPM-121-D1-Incremental-Game)
+[Riya Iyer’s D1 Project](https://github.com/riyer4/cmpm-121-f25-Ria-Iyer-D1)
 
 Primary Button Emphasis:
 The glowing ring and subtle pulse animation around the main “Mine Crystal” button were inspired by KupoDupo’s D1 project
