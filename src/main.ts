@@ -118,11 +118,6 @@ for (const it of availableItems) {
       it.cost = it.baseCost * Math.pow(PRICE_FACTOR, it.count);
       recomputeGrowthRate();
       paint();
-      console.log(
-        `⚙️ Purchased ${it.name} (x${it.count}). Next cost: ${
-          it.cost.toFixed(2)
-        } crystals • Total rate: ${growthRate.toFixed(2)} crystals/sec`,
-      );
     }
   });
 }
@@ -175,7 +170,6 @@ function paint() {
 clickBtn.addEventListener("click", () => {
   counter += 1;
   paint();
-  console.log(`💎 +1 crystal! Total: ${counter.toFixed(2)}`);
 });
 
 //passive income logic
