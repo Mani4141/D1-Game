@@ -1,12 +1,12 @@
 import "./style.css";
 
-//click
+// UI: Core click button for manual crystal gain
 const clickBtn = document.createElement("button");
 clickBtn.id = "clickMe";
 clickBtn.textContent = "⛏️ Mine Crystal";
 document.body.appendChild(clickBtn);
 
-//counter
+// State: Tracks player crystals and passive growth
 let counter = 0;
 const counterDiv = document.createElement("div");
 counterDiv.id = "counter";
@@ -14,34 +14,36 @@ document.body.appendChild(counterDiv);
 
 let growthRate = 0;
 
-// rate display
+// UI: Displays the player's current crystal growth rate
 const rateDiv = document.createElement("div");
 rateDiv.id = "rate";
 document.body.appendChild(rateDiv);
 
+// UI: Shows owned items and inventory status
 const inventoryDiv = document.createElement("div");
 inventoryDiv.id = "inventory";
 document.body.appendChild(inventoryDiv);
 
-//shop
+// UI: Contains all purchasable upgrade buttons
 const shop = document.createElement("div");
 shop.id = "shop";
 document.body.appendChild(shop);
 
-// --- Data-driven items ---
+// Data Model: Defines structure for all upgrade items
 interface Item {
-  key: string; // stable id
-  name: string; // label shown to user
+  key: string;
+  name: string;
   emoji: string;
-  description: string; // NEW: fun description text
-  baseCost: number; // starting cost
-  cost: number; // current cost (scales by factor)
-  rate: number; // crystals per second
-  count: number; // owned
+  description: string;
+  baseCost: number;
+  cost: number;
+  rate: number;
+  count: number;
 }
 
 const PRICE_FACTOR = 1.15;
 
+// Game Data: List of upgrades available to the player
 const availableItems: Item[] = [
   {
     key: "cart",
@@ -95,14 +97,14 @@ const availableItems: Item[] = [
   },
 ];
 
+// UI Setup: Generate upgrade buttons and interactions
 const buttons = new Map<string, HTMLButtonElement>();
 
-// buttons for upgrades (loop builds all)
 for (const it of availableItems) {
   const btn = document.createElement("button");
   btn.className = "upgradeBtn";
   btn.dataset.key = it.key;
-  btn.title = it.description; // tooltip with description
+  btn.title = it.description;
   btn.textContent = `${it.emoji} Buy ${it.name} (+${it.rate}/s) • Cost: ${
     it.cost.toFixed(2)
   } crystals`;
@@ -114,7 +116,7 @@ for (const it of availableItems) {
     if (counter >= it.cost) {
       counter -= it.cost;
       it.count += 1;
-      // 15% exponential price increase after each purchase
+      // Price scales exponentially after each purchase to increase challenge
       it.cost = it.baseCost * Math.pow(PRICE_FACTOR, it.count);
       recomputeGrowthRate();
       paint();
@@ -122,7 +124,7 @@ for (const it of availableItems) {
   });
 }
 
-//helpers (loop-based over availableItems)
+// Logic: Calculates growth rate and button state
 function recomputeGrowthRate() {
   growthRate = availableItems.reduce((sum, it) => sum + it.count * it.rate, 0);
 }
@@ -134,6 +136,7 @@ function updateAffordability() {
   }
 }
 
+// Rendering: Updates different parts of the UI
 function paintCounter() {
   counterDiv.textContent = `${counter.toFixed(2)} Crystals 💎`;
 }
@@ -158,6 +161,7 @@ function paintShop() {
   }
 }
 
+// Rendering: Updates all displays at once
 function paint() {
   paintCounter();
   paintRate();
@@ -166,13 +170,13 @@ function paint() {
   updateAffordability();
 }
 
-// Click logic
+// Input Handling: Clicking manually increases crystals
 clickBtn.addEventListener("click", () => {
   counter += 1;
   paint();
 });
 
-//passive income logic
+// Game Loop: Adds passive crystals over time
 let lastTime = performance.now();
 
 function update(now: number) {
@@ -189,6 +193,6 @@ function update(now: number) {
   requestAnimationFrame(update);
 }
 
-// --- Initialize UI ---
+// Startup: Initialize and start the loop
 paint();
 requestAnimationFrame(update);
